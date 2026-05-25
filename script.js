@@ -17,7 +17,8 @@ const organizations = {
   eea: eea,
   nato: nato,
   osce: osce,
-  coe: coe
+  coe: coe,
+  eu_council: eu
 };
 
 let currentOrg = 'none';
