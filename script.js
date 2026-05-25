@@ -5,6 +5,7 @@ const nato = { ALB: 2009, BEL: 1949, BGR: 2004, CAN: 1949, HRV: 2009, CZE: 1999,
 const osce = { AUT: 1975, BEL: 1975, BGR: 1975, CAN: 1975, CYP: 1975, CZE: 1993, DNK: 1975, FIN: 1975, FRA: 1975, DEU: 1975, GRC: 1975, VAT: 1975, HUN: 1975, ISL: 1975, IRL: 1975, ITA: 1975, LIE: 1975, LUX: 1975, MLT: 1975, MCO: 1975, NLD: 1975, NOR: 1975, POL: 1975, PRT: 1975, ROU: 1975, SMR: 1975, ESP: 1975, SWE: 1975, CHE: 1975, TUR: 1975, GBR: 1975, USA: 1975, ALB: 1991, AND: 1996, ARM: 1992, AZE: 1992, BLR: 1992, BIH: 1992, HRV: 1992, EST: 1991, GEO: 1992, KAZ: 1992, KGZ: 1992, LVA: 1991, LTU: 1991, MDA: 1992, MNG: 2012, MNE: 2006, MKD: 1995, RUS: 1991, SRB: 2000, SVK: 1993, SVN: 1992, TJK: 1992, TKM: 1992, UKR: 1992, UZB: 1992 };
 
 const unNonMembers = ['TWN', 'ESH', 'KOS', 'PSE', 'VAT', 'SXM', 'CUW', 'ABW', 'GRL', 'NCL', 'PYF', 'ATF'];
+const interpolNonMembers = ['PRK', 'TWN', 'ESH', 'KOS', 'SXM', 'CUW', 'ABW', 'GRL', 'NCL', 'PYF', 'ATF'];
 const onu_founders = ['ARG', 'AUS', 'BEL', 'BOL', 'BRA', 'BLR', 'CAN', 'CHL', 'CHN', 'COL', 'CRI', 'CUB', 'CZE', 'DNK', 'DOM', 'ECU', 'EGY', 'SLV', 'ETH', 'FRA', 'GRC', 'GTM', 'HTI', 'HND', 'IND', 'IRN', 'IRQ', 'LBN', 'LBR', 'LUX', 'MEX', 'NLD', 'NZL', 'NIC', 'NOR', 'PAN', 'PRY', 'PER', 'PHL', 'POL', 'RUS', 'SAU', 'ZAF', 'SYR', 'TUR', 'UKR', 'GBR', 'USA', 'URY', 'VEN', 'YUG'];
 const onu_years = { AFG: 1946, ISL: 1946, SWE: 1946, THA: 1946, PAK: 1947, YEM: 1947, MMR: 1948, ISR: 1949, IDN: 1950, ALB: 1955, AUT: 1955, BGR: 1955, KHM: 1955, LKA: 1955, FIN: 1955, HUN: 1955, IRL: 1955, ITA: 1955, JOR: 1955, LAO: 1955, LBY: 1955, NPL: 1955, PRT: 1955, ROU: 1955, ESP: 1955, JPN: 1956, MAR: 1956, SDN: 1956, TUN: 1956, GHA: 1957, MYS: 1957, GIN: 1958, BEN: 1960, BFA: 1960, CMR: 1960, CAF: 1960, TCD: 1960, COG: 1960, CIV: 1960, CYP: 1960, GAB: 1960, MDG: 1960, MLI: 1960, NER: 1960, NGA: 1960, SEN: 1960, SOM: 1960, TGO: 1960, COD: 1960, MRT: 1961, MNG: 1961, SLE: 1961, TZA: 1961, DZA: 1962, BDI: 1962, JAM: 1962, RWA: 1962, TTO: 1962, UGA: 1962, KEN: 1963, KWT: 1963, MWI: 1964, MLT: 1964, ZMB: 1964, GMB: 1965, MDV: 1965, SGP: 1965, BRB: 1966, BWA: 1966, GUY: 1966, LSO: 1966, GNQ: 1968, MUS: 1968, SWZ: 1968, FJI: 1970, BHR: 1971, BTN: 1971, OMN: 1971, QAT: 1971, ARE: 1971, BHS: 1973, DEU: 1973, BGD: 1974, GRD: 1974, GNB: 1974, CPV: 1975, COM: 1975, MOZ: 1975, PNG: 1975, STP: 1975, SUR: 1975, AGO: 1976, WSM: 1976, SYC: 1976, DJI: 1977, VNM: 1977, DMA: 1978, SLB: 1978, LCA: 1979, VCT: 1980, ZWE: 1980, ATG: 1981, BLZ: 1981, VUT: 1981, KNA: 1983, BRN: 1984, LIE: 1990, NAM: 1990, PRK: 1991, KOR: 1991, FSM: 1991, MHL: 1991, EST: 1991, LVA: 1991, LTU: 1991, ARM: 1992, AZE: 1992, BIH: 1992, HRV: 1992, GEO: 1992, KAZ: 1992, KGZ: 1992, MDA: 1992, SMR: 1992, SVN: 1992, TJK: 1992, TKM: 1992, UZB: 1992, AND: 1993, ERI: 1993, MKD: 1993, MCO: 1993, SVK: 1993, PLW: 1994, KIR: 1999, NRU: 1999, TON: 1999, TUV: 2000, SRB: 2000, CHE: 2002, TLS: 2002, MNE: 2006, SSD: 2011 };
 
@@ -37,6 +38,13 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
             if (iso && iso !== '-99' && !unNonMembers.includes(iso)) {
                 if (onu_founders.includes(iso)) return 1945;
                 if (onu_years[iso]) return onu_years[iso];
+                return 'Membru'; 
+            }
+            return false;
+        }
+
+        if (currentOrg === 'interpol') {
+            if (iso && iso !== '-99' && !interpolNonMembers.includes(iso)) {
                 return 'Membru'; 
             }
             return false;
@@ -105,6 +113,8 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
         const org = btn.getAttribute('data-org');
         if (org === 'onu') {
            btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">193 de state</span>`;
+        } else if (org === 'interpol') {
+           btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">196 de state</span>`;
         } else if (organizations[org]) {
            const count = Object.keys(organizations[org]).length;
            btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">${count} de state</span>`;
