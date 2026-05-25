@@ -104,10 +104,10 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
       buttons.forEach(btn => {
         const org = btn.getAttribute('data-org');
         if (org === 'onu') {
-           btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">193</span>`;
+           btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">193 de state</span>`;
         } else if (organizations[org]) {
            const count = Object.keys(organizations[org]).length;
-           btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">${count}</span>`;
+           btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">${count} de state</span>`;
         }
 
         btn.addEventListener('click', (e) => {
