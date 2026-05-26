@@ -61,6 +61,14 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
             }
             return false;
         }
+
+        if (currentOrg === 'unhcr') {
+            if (iso && iso !== '-99' && !unNonMembers.includes(iso)) {
+                if (onu_founders.includes(iso)) return 1950; // UNHCR founded in 1950
+                return 'Membru'; 
+            }
+            return false;
+        }
         
         if (organizations[currentOrg] && organizations[currentOrg][iso]) {
             return organizations[currentOrg][iso];
@@ -129,6 +137,8 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
            btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">196 de state</span>`;
         } else if (org === 'oms') {
            btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">194 de state</span>`;
+        } else if (org === 'unhcr') {
+           btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">193 de state</span>`;
         } else if (organizations[org]) {
            const count = Object.keys(organizations[org]).length;
            btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">${count} de state</span>`;
