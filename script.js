@@ -8,6 +8,7 @@ const ocde = { AUT: 1961, BEL: 1961, CAN: 1961, DNK: 1961, FRA: 1961, DEU: 1961,
 const arab_league = { EGY: 1945, IRQ: 1945, JOR: 1945, LBN: 1945, SAU: 1945, SYR: 1945, YEM: 1945, LBY: 1953, SDN: 1956, MAR: 1958, TUN: 1958, KWT: 1961, DZA: 1962, ARE: 1971, BHR: 1971, QAT: 1971, OMN: 1971, MRT: 1973, SOM: 1974, PSE: 1976, DJI: 1977, COM: 1993 };
 const csi = { ARM: 1991, AZE: 1993, BLR: 1991, KAZ: 1991, KGZ: 1991, RUS: 1991, TJK: 1991, UZB: 1991, TKM: 1991 };
 const mercosur = { ARG: 1991, BRA: 1991, PRY: 1991, URY: 1991, BOL: 2023 };
+const frontex = { AUT: 2004, BEL: 2004, BGR: 2007, HRV: 2013, CYP: 2004, CZE: 2004, DNK: 2004, EST: 2004, FIN: 2004, FRA: 2004, DEU: 2004, GRC: 2004, HUN: 2004, ISL: 2004, ITA: 2004, LVA: 2004, LIE: 2011, LTU: 2004, LUX: 2004, MLT: 2004, NLD: 2004, NOR: 2004, POL: 2004, PRT: 2004, ROU: 2007, SVK: 2004, SVN: 2004, ESP: 2004, SWE: 2004, CHE: 2008 };
 
 const unNonMembers = ['TWN', 'ESH', 'KOS', 'PSE', 'VAT', 'SXM', 'CUW', 'ABW', 'GRL', 'NCL', 'PYF', 'ATF'];
 const interpolNonMembers = ['PRK', 'TWN', 'ESH', 'KOS', 'SXM', 'CUW', 'ABW', 'GRL', 'NCL', 'PYF', 'ATF'];
@@ -28,7 +29,8 @@ const organizations = {
   ocde: ocde,
   arab_league: arab_league,
   csi: csi,
-  mercosur: mercosur
+  mercosur: mercosur,
+  frontex: frontex
 };
 
 let currentOrg = 'none';
