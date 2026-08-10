@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Organizații Globale</title>
-  <link rel="stylesheet" href="style.css?v=21">
+  <link rel="stylesheet" href="style.css?v=22">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/globe.gl"></script>
@@ -30,8 +30,13 @@
       <div id="search-results"></div>
     </div>
     <div id="button-group">
-      <button data-org="schengen_viza" class="schengen-viza-btn">Țări care au nevoie de viză în spațiul Schengen</button>
       <button data-org="none" class="active">Resetare (Toate)</button>
+      <button data-org="schengen_viza" class="schengen-viza-btn">Țări care au nevoie de viză în spațiul Schengen</button>
+      <button data-org="overseas">Teritoriile de peste mări</button>
+      <div id="overseas-panel">
+        <div class="overseas-title">Alege o țară pentru a-i vedea teritoriile:</div>
+        <div id="overseas-list"></div>
+      </div>
       <button data-org="schengen">Spațiul Schengen</button>
       <button data-org="eu">Uniunea Europeană (UE)</button>
       <button data-org="coe">Consiliul Europei</button>
@@ -50,14 +55,9 @@
       <button data-org="csi">CSI (Comunitatea Statelor Independente)</button>
       <button data-org="mercosur">MERCOSUR (Piața Comună a Sudului)</button>
       <button data-org="frontex">FRONTEX (Agenția Europeană pt. Poliția de Frontieră)</button>
-      <button data-org="overseas">Teritoriile de peste mări</button>
-      <div id="overseas-panel">
-        <div class="overseas-title">Alege o țară pentru a-i vedea teritoriile:</div>
-        <div id="overseas-list"></div>
-      </div>
     </div>
   </div>
   <div id="globe-container"></div>
-  <script src="script.js?v=21"></script>
+  <script src="script.js?v=22"></script>
 </body>
 </html>
