@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Organizații Globale</title>
-  <link rel="stylesheet" href="style.css?v=18">
+  <link rel="stylesheet" href="style.css?v=19">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/globe.gl"></script>
@@ -25,6 +25,10 @@
   <div id="ui-container">
     <h1>Organizații Globale</h1>
     <p>Selectați o organizație pentru a vedea țările membre pe glob (marcate cu verde).</p>
+    <div id="search-container">
+      <input type="text" id="country-search" placeholder="🔍 Caută o țară..." autocomplete="off" spellcheck="false">
+      <div id="search-results"></div>
+    </div>
     <div id="button-group">
       <button data-org="schengen_viza" class="schengen-viza-btn">Țări care au nevoie de viză în spațiul Schengen</button>
       <button data-org="none" class="active">Resetare (Toate)</button>
@@ -49,6 +53,6 @@
     </div>
   </div>
   <div id="globe-container"></div>
-  <script src="script.js?v=18"></script>
+  <script src="script.js?v=19"></script>
 </body>
 </html>

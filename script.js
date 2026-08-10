@@ -39,6 +39,75 @@ const organizations = {
 };
 
 let currentOrg = 'none';
+let highlightedFeature = null;
+let resumeRotateTimer = null;
+
+// ---------- Căutare țări ----------
+// Dicționar nume în română (după cod ISO A3). Unde lipsește, se folosește numele în engleză.
+const roNames = {
+  AFG: 'Afganistan', ALB: 'Albania', DZA: 'Algeria', AND: 'Andorra', AGO: 'Angola', ATG: 'Antigua și Barbuda',
+  ARG: 'Argentina', ARM: 'Armenia', AUS: 'Australia', AUT: 'Austria', AZE: 'Azerbaidjan', BHS: 'Bahamas',
+  BHR: 'Bahrain', BGD: 'Bangladesh', BRB: 'Barbados', BLR: 'Belarus', BEL: 'Belgia', BLZ: 'Belize',
+  BEN: 'Benin', BTN: 'Bhutan', BOL: 'Bolivia', BIH: 'Bosnia și Herțegovina', BWA: 'Botswana', BRA: 'Brazilia',
+  BRN: 'Brunei', BGR: 'Bulgaria', BFA: 'Burkina Faso', BDI: 'Burundi', CPV: 'Capul Verde', KHM: 'Cambodgia',
+  CMR: 'Camerun', CAN: 'Canada', CAF: 'Republica Centrafricană', TCD: 'Ciad', CHL: 'Chile', CHN: 'China',
+  COL: 'Columbia', COM: 'Comore', COG: 'Congo', COD: 'Republica Democrată Congo', CRI: 'Costa Rica',
+  CIV: 'Coasta de Fildeș', HRV: 'Croația', CUB: 'Cuba', CYP: 'Cipru', CZE: 'Cehia', DNK: 'Danemarca',
+  DJI: 'Djibouti', DMA: 'Dominica', DOM: 'Republica Dominicană', ECU: 'Ecuador', EGY: 'Egipt', SLV: 'El Salvador',
+  GNQ: 'Guineea Ecuatorială', ERI: 'Eritreea', EST: 'Estonia', SWZ: 'Eswatini', ETH: 'Etiopia', FJI: 'Fiji',
+  FIN: 'Finlanda', FRA: 'Franța', GAB: 'Gabon', GMB: 'Gambia', GEO: 'Georgia', DEU: 'Germania', GHA: 'Ghana',
+  GRC: 'Grecia', GRL: 'Groenlanda', GRD: 'Grenada', GTM: 'Guatemala', GIN: 'Guineea', GNB: 'Guineea-Bissau',
+  GUY: 'Guyana', HTI: 'Haiti', HND: 'Honduras', HUN: 'Ungaria', ISL: 'Islanda', IND: 'India', IDN: 'Indonezia',
+  IRN: 'Iran', IRQ: 'Irak', IRL: 'Irlanda', ISR: 'Israel', ITA: 'Italia', JAM: 'Jamaica', JPN: 'Japonia',
+  JOR: 'Iordania', KAZ: 'Kazahstan', KEN: 'Kenya', KIR: 'Kiribati', PRK: 'Coreea de Nord', KOR: 'Coreea de Sud',
+  KOS: 'Kosovo', KWT: 'Kuweit', KGZ: 'Kârgâzstan', LAO: 'Laos', LVA: 'Letonia', LBN: 'Liban', LSO: 'Lesotho',
+  LBR: 'Liberia', LBY: 'Libia', LIE: 'Liechtenstein', LTU: 'Lituania', LUX: 'Luxemburg', MDG: 'Madagascar',
+  MWI: 'Malawi', MYS: 'Malaezia', MDV: 'Maldive', MLI: 'Mali', MLT: 'Malta', MHL: 'Insulele Marshall',
+  MRT: 'Mauritania', MUS: 'Mauritius', MEX: 'Mexic', FSM: 'Micronezia', MDA: 'Republica Moldova', MCO: 'Monaco',
+  MNG: 'Mongolia', MNE: 'Muntenegru', MAR: 'Maroc', MOZ: 'Mozambic', MMR: 'Myanmar', NAM: 'Namibia',
+  NRU: 'Nauru', NPL: 'Nepal', NLD: 'Țările de Jos', NZL: 'Noua Zeelandă', NIC: 'Nicaragua', NER: 'Niger',
+  NGA: 'Nigeria', MKD: 'Macedonia de Nord', NOR: 'Norvegia', OMN: 'Oman', PAK: 'Pakistan', PLW: 'Palau',
+  PSE: 'Palestina', PAN: 'Panama', PNG: 'Papua Noua Guinee', PRY: 'Paraguay', PER: 'Peru', PHL: 'Filipine',
+  POL: 'Polonia', PRT: 'Portugalia', QAT: 'Qatar', ROU: 'România', RUS: 'Rusia', RWA: 'Rwanda',
+  KNA: 'Saint Kitts și Nevis', LCA: 'Saint Lucia', VCT: 'Saint Vincent și Grenadine', WSM: 'Samoa',
+  SMR: 'San Marino', STP: 'São Tomé și Príncipe', SAU: 'Arabia Saudită', SEN: 'Senegal', SRB: 'Serbia',
+  SYC: 'Seychelles', SLE: 'Sierra Leone', SGP: 'Singapore', SVK: 'Slovacia', SVN: 'Slovenia', SLB: 'Insulele Solomon',
+  SOM: 'Somalia', ZAF: 'Africa de Sud', SSD: 'Sudanul de Sud', ESP: 'Spania', LKA: 'Sri Lanka', SDN: 'Sudan',
+  SUR: 'Surinam', SWE: 'Suedia', CHE: 'Elveția', SYR: 'Siria', TWN: 'Taiwan', TJK: 'Tadjikistan',
+  TZA: 'Tanzania', THA: 'Thailanda', TLS: 'Timorul de Est', TGO: 'Togo', TON: 'Tonga', TTO: 'Trinidad și Tobago',
+  TUN: 'Tunisia', TUR: 'Turcia', TKM: 'Turkmenistan', TUV: 'Tuvalu', UGA: 'Uganda', UKR: 'Ucraina',
+  ARE: 'Emiratele Arabe Unite', GBR: 'Regatul Unit', USA: 'Statele Unite ale Americii', URY: 'Uruguay',
+  UZB: 'Uzbekistan', VUT: 'Vanuatu', VAT: 'Vatican', VEN: 'Venezuela', VNM: 'Vietnam', YEM: 'Yemen',
+  ZMB: 'Zambia', ZWE: 'Zimbabwe', ESH: 'Sahara de Vest'
+};
+
+// Elimină diacriticele și face literele mici: „România" -> „romania"
+const normalizeStr = (s) => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+// Centroid geografic al celui mai mare inel al poligonului (mediere sferică,
+// robustă și pentru țări de la antimeridian: Rusia, Fiji, SUA).
+const centroidOf = (feature) => {
+  const geom = feature.geometry;
+  if (!geom) return { lat: 0, lng: 0 };
+  let rings = [];
+  if (geom.type === 'Polygon') rings = [geom.coordinates[0]];
+  else if (geom.type === 'MultiPolygon') rings = geom.coordinates.map(p => p[0]);
+  if (!rings.length) return { lat: 0, lng: 0 };
+  const ring = rings.reduce((a, b) => (b.length > a.length ? b : a), rings[0]);
+  let x = 0, y = 0, z = 0;
+  ring.forEach(([lng, lat]) => {
+    const la = lat * Math.PI / 180, lo = lng * Math.PI / 180;
+    x += Math.cos(la) * Math.cos(lo);
+    y += Math.cos(la) * Math.sin(lo);
+    z += Math.sin(la);
+  });
+  const n = ring.length || 1;
+  x /= n; y /= n; z /= n;
+  const lng = Math.atan2(y, x) * 180 / Math.PI;
+  const hyp = Math.sqrt(x * x + y * y);
+  const lat = Math.atan2(z, hyp) * 180 / Math.PI;
+  return { lat, lng };
+};
 
 fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
   .then(res => res.json())
@@ -51,6 +120,24 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
         }
         return iso;
     };
+
+    // Index de căutare: nume RO + EN, cod ISO, centroid, referință la feature
+    const countryIndex = countries.features.map(f => {
+        const iso = getIso(f);
+        const nameEn = f.properties.ADMIN || '';
+        const nameRo = roNames[iso] || nameEn;
+        const { lat, lng } = centroidOf(f);
+        return {
+            feature: f,
+            iso,
+            nameEn,
+            nameRo,
+            lat,
+            lng,
+            keyRo: normalizeStr(nameRo),
+            keyEn: normalizeStr(nameEn)
+        };
+    }).filter(c => c.nameEn);
       const getSchengenVizaStatus = (iso) => {
                 if (!iso || iso === '-99') return false;
                 if (schengen[iso]) return 'schengen';
@@ -116,6 +203,7 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
         return false;
     };
           const getPolygonColor = (feat) => {
+                    if (feat === highlightedFeature) return 'rgba(245, 158, 11, 0.95)';
                     if (currentOrg === 'none') return 'rgba(255, 255, 255, 0.6)';
                     const iso = getIso(feat);
                     if (currentOrg === 'schengen_viza') {
@@ -162,16 +250,118 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
             
           return `
             <div style="background: rgba(255, 255, 255, 0.95); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-family: 'Inter', sans-serif;">
-                <b style="color: #1e293b; font-size: 14px;">${d.ADMIN}</b>
+                <b style="color: #1e293b; font-size: 14px;">${roNames[iso] || d.ADMIN}</b>
                 ${memberBadge}
             </div>
           `;
       })
       .onPolygonHover(hoverD => {
-        world.polygonAltitude(d => d === hoverD ? 0.08 : 0.01)
+        world.polygonAltitude(d => {
+          if (d === hoverD) return d === highlightedFeature ? 0.28 : 0.08;
+          return d === highlightedFeature ? 0.25 : 0.01;
+        })
           .polygonCapColor(d => d === hoverD ? '#60a5fa' : getPolygonColor(d));
       })
       .polygonsTransitionDuration(300);
+
+      // Redesenează poligoanele (relief + culori) în funcție de țara evidențiată
+      const refreshPolygons = () => {
+        world.polygonAltitude(d => d === highlightedFeature ? 0.25 : 0.01);
+        world.polygonCapColor(d => getPolygonColor(d));
+      };
+
+      // ---------- Motor de căutare țări ----------
+      const searchInput = document.getElementById('country-search');
+      const searchResults = document.getElementById('search-results');
+      let activeIndex = -1;
+      let currentMatches = [];
+
+      const closeResults = () => {
+        searchResults.classList.remove('visible');
+        searchResults.innerHTML = '';
+        activeIndex = -1;
+      };
+
+      const selectCountry = (entry) => {
+        searchInput.value = entry.nameRo;
+        closeResults();
+        highlightedFeature = entry.feature;
+        refreshPolygons();
+        // Globul se rotește și "zboară" spre țară
+        world.pointOfView({ lat: entry.lat, lng: entry.lng, altitude: 1.6 }, 1600);
+        world.controls().autoRotate = false;
+        clearTimeout(resumeRotateTimer);
+        resumeRotateTimer = setTimeout(() => { world.controls().autoRotate = true; }, 9000);
+      };
+
+      const renderResults = (matches) => {
+        currentMatches = matches;
+        activeIndex = matches.length ? 0 : -1;
+        if (!matches.length) {
+          searchResults.innerHTML = '<div class="search-empty">Nicio țară găsită</div>';
+          searchResults.classList.add('visible');
+          return;
+        }
+        searchResults.innerHTML = matches.map((c, i) => `
+          <div class="search-item${i === activeIndex ? ' selected' : ''}" data-idx="${i}">
+            <span class="search-item-name">${c.nameRo}</span>
+            <span class="search-item-alt">${c.nameRo !== c.nameEn ? c.nameEn : c.iso}</span>
+          </div>
+        `).join('');
+        searchResults.classList.add('visible');
+        searchResults.querySelectorAll('.search-item').forEach(el => {
+          el.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            selectCountry(currentMatches[Number(el.getAttribute('data-idx'))]);
+          });
+        });
+      };
+
+      const filterCountries = (q) => {
+        const query = normalizeStr(q.trim());
+        if (!query) return [];
+        const starts = [], contains = [];
+        countryIndex.forEach(c => {
+          if (c.keyRo.startsWith(query) || c.keyEn.startsWith(query)) starts.push(c);
+          else if (c.keyRo.includes(query) || c.keyEn.includes(query)) contains.push(c);
+        });
+        return starts.concat(contains).slice(0, 8);
+      };
+
+      searchInput.addEventListener('input', () => {
+        const q = searchInput.value;
+        if (!q.trim()) {
+          closeResults();
+          if (highlightedFeature) {
+            highlightedFeature = null;
+            refreshPolygons();
+          }
+          return;
+        }
+        renderResults(filterCountries(q));
+      });
+
+      searchInput.addEventListener('keydown', (e) => {
+        if (!searchResults.classList.contains('visible')) return;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (!currentMatches.length) return;
+          activeIndex = (activeIndex + (e.key === 'ArrowDown' ? 1 : -1) + currentMatches.length) % currentMatches.length;
+          searchResults.querySelectorAll('.search-item').forEach((el, i) => {
+            el.classList.toggle('selected', i === activeIndex);
+          });
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (activeIndex >= 0 && currentMatches[activeIndex]) selectCountry(currentMatches[activeIndex]);
+        } else if (e.key === 'Escape') {
+          closeResults();
+        }
+      });
+
+      searchInput.addEventListener('blur', () => setTimeout(closeResults, 150));
+      searchInput.addEventListener('focus', () => {
+        if (searchInput.value.trim()) renderResults(filterCountries(searchInput.value));
+      });
 
       world.controls().autoRotate = true;
       world.controls().autoRotateSpeed = -0.5;
@@ -220,7 +410,8 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
           e.currentTarget.classList.add('active');
           
           currentOrg = e.currentTarget.getAttribute('data-org');
-          world.polygonCapColor(world.polygonCapColor());
+          if (currentOrg === 'none') highlightedFeature = null;
+          refreshPolygons();
           updateVisaCounters();
         });
       });
