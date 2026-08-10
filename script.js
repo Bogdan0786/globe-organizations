@@ -17,6 +17,8 @@ const fmiNonMembers = ['CUB', 'PRK', 'MCO', 'LIE', 'TWN', 'ESH', 'VAT', 'PSE', '
 const unescoNonMembers = ['ISR', 'LIE', 'TWN', 'ESH', 'KOS', 'VAT', 'SXM', 'CUW', 'ABW', 'GRL', 'NCL', 'PYF', 'ATF'];
 const onu_founders = ['ARG', 'AUS', 'BEL', 'BOL', 'BRA', 'BLR', 'CAN', 'CHL', 'CHN', 'COL', 'CRI', 'CUB', 'CZE', 'DNK', 'DOM', 'ECU', 'EGY', 'SLV', 'ETH', 'FRA', 'GRC', 'GTM', 'HTI', 'HND', 'IND', 'IRN', 'IRQ', 'LBN', 'LBR', 'LUX', 'MEX', 'NLD', 'NZL', 'NIC', 'NOR', 'PAN', 'PRY', 'PER', 'PHL', 'POL', 'RUS', 'SAU', 'ZAF', 'SYR', 'TUR', 'UKR', 'GBR', 'USA', 'URY', 'VEN', 'YUG'];
 const onu_years = { AFG: 1946, ISL: 1946, SWE: 1946, THA: 1946, PAK: 1947, YEM: 1947, MMR: 1948, ISR: 1949, IDN: 1950, ALB: 1955, AUT: 1955, BGR: 1955, KHM: 1955, LKA: 1955, FIN: 1955, HUN: 1955, IRL: 1955, ITA: 1955, JOR: 1955, LAO: 1955, LBY: 1955, NPL: 1955, PRT: 1955, ROU: 1955, ESP: 1955, JPN: 1956, MAR: 1956, SDN: 1956, TUN: 1956, GHA: 1957, MYS: 1957, GIN: 1958, BEN: 1960, BFA: 1960, CMR: 1960, CAF: 1960, TCD: 1960, COG: 1960, CIV: 1960, CYP: 1960, GAB: 1960, MDG: 1960, MLI: 1960, NER: 1960, NGA: 1960, SEN: 1960, SOM: 1960, TGO: 1960, COD: 1960, MRT: 1961, MNG: 1961, SLE: 1961, TZA: 1961, DZA: 1962, BDI: 1962, JAM: 1962, RWA: 1962, TTO: 1962, UGA: 1962, KEN: 1963, KWT: 1963, MWI: 1964, MLT: 1964, ZMB: 1964, GMB: 1965, MDV: 1965, SGP: 1965, BRB: 1966, BWA: 1966, GUY: 1966, LSO: 1966, GNQ: 1968, MUS: 1968, SWZ: 1968, FJI: 1970, BHR: 1971, BTN: 1971, OMN: 1971, QAT: 1971, ARE: 1971, BHS: 1973, DEU: 1973, BGD: 1974, GRD: 1974, GNB: 1974, CPV: 1975, COM: 1975, MOZ: 1975, PNG: 1975, STP: 1975, SUR: 1975, AGO: 1976, WSM: 1976, SYC: 1976, DJI: 1977, VNM: 1977, DMA: 1978, SLB: 1978, LCA: 1979, VCT: 1980, ZWE: 1980, ATG: 1981, BLZ: 1981, VUT: 1981, KNA: 1983, BRN: 1984, LIE: 1990, NAM: 1990, PRK: 1991, KOR: 1991, FSM: 1991, MHL: 1991, EST: 1991, LVA: 1991, LTU: 1991, ARM: 1992, AZE: 1992, BIH: 1992, HRV: 1992, GEO: 1992, KAZ: 1992, KGZ: 1992, MDA: 1992, SMR: 1992, SVN: 1992, TJK: 1992, TKM: 1992, UZB: 1992, AND: 1993, ERI: 1993, MKD: 1993, MCO: 1993, SVK: 1993, PLW: 1994, KIR: 1999, NRU: 1999, TON: 1999, TUV: 2000, SRB: 2000, CHE: 2002, TLS: 2002, MNE: 2006, SSD: 2011 };
+const schengenVisaRequired = ['AFG','ARM','AGO','AZE','BGD','BFA','BHR','BDI','BEN','BOL','BTN','BWA','BLR','BLZ','COD','CAF','COG','CIV','CMR','CHN','CUB','CPV','DJI','DOM','DZA','ECU','EGY','ERI','SWZ','ETH','FJI','GAB','GHA','GMB','GIN','GNQ','GNB','GUY','HTI','IDN','IND','IRQ','IRN','JAM','JOR','KEN','KGZ','KHM','COM','PRK','KWT','KAZ','LAO','LBN','LKA','LBR','LSO','LBY','MAR','MDG','MLI','MMR','MNG','MRT','MDV','MWI','MOZ','NAM','NER','NGA','NPL','OMN','PNG','PHL','PAK','QAT','RUS','RWA','SAU','SDN','SLE','SEN','SOM','SUR','SSD','STP','SYR','TCD','TGO','THA','TJK','TKM','TUN','TUR','TZA','UGA','UZB','VUT','VNM','YEM','ZAF','ZMB','ZWE','PSE'];
+const schengenVisaExempt = ['MKD','AND','ARE','ATG','ALB','ARG','AUS','BIH','BRB','BRN','BRA','BHS','CAN','CHL','COL','CRI','DMA','FSM','GRD','GEO','GTM','HND','ISR','JPN','KIR','KNA','KOR','LCA','MCO','MDA','MNE','MHL','MUS','MEX','MYS','NIC','NRU','NZL','PAN','PER','PLW','PRY','SRB','SLB','SYC','SGP','SMR','SLV','TLS','TON','TTO','TUV','UKR','GBR','USA','URY','VAT','VCT','VEN','WSM','TWN','KOS'];
 
 const organizations = {
   schengen: schengen,
@@ -46,7 +48,13 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
         }
         return iso;
     };
-
+      const getSchengenVizaStatus = (iso) => {
+                if (!iso || iso === '-99') return false;
+                if (schengen[iso]) return 'schengen';
+                if (schengenVisaRequired.includes(iso)) return 'required';
+                if (schengenVisaExempt.includes(iso)) return 'exempt';
+                return false;
+      };
     const getCountryMemberYear = (iso) => {
         if (currentOrg === 'none') return false;
         
@@ -103,6 +111,18 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
         }
         return false;
     };
+          const getPolygonColor = (feat) => {
+                    if (currentOrg === 'none') return 'rgba(255, 255, 255, 0.6)';
+                    const iso = getIso(feat);
+                    if (currentOrg === 'schengen_viza') {
+                                const status = getSchengenVizaStatus(iso);
+                                if (status === 'schengen') return 'rgba(37, 99, 235, 0.9)';
+                                if (status === 'required') return 'rgba(220, 38, 38, 0.9)';
+                                if (status === 'exempt') return 'rgba(34, 197, 94, 0.9)';
+                                return 'rgba(200, 205, 215, 0.6)';
+                    }
+                    return getCountryMemberYear(iso) !== false ? 'rgba(34, 197, 94, 0.9)' : 'rgba(200, 205, 215, 0.6)';
+          };
 
     const world = Globe()
       (document.getElementById('globe-container'))
@@ -110,13 +130,7 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
       .backgroundColor('#f8fafc')
       .polygonsData(countries.features)
       .polygonAltitude(0.01)
-      .polygonCapColor(feat => {
-        if (currentOrg === 'none') {
-           return 'rgba(255, 255, 255, 0.6)';
-        }
-        const iso = getIso(feat);
-        return getCountryMemberYear(iso) !== false ? 'rgba(34, 197, 94, 0.9)' : 'rgba(200, 205, 215, 0.6)';
-      })
+      .polygonCapColor(feat => getPolygonColor(feat))
       .polygonSideColor(() => 'rgba(0, 0, 0, 0.1)')
       .polygonStrokeColor(() => '#e2e8f0')
       .polygonLabel(({ properties: d }) => {
@@ -124,7 +138,16 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
           const memberYear = getCountryMemberYear(iso);
           
           let memberBadge = '';
-          if (memberYear !== false) {
+                  if (currentOrg === 'schengen_viza') {
+                              const status = getSchengenVizaStatus(iso);
+                              if (status === 'schengen') {
+                                            memberBadge = `<div style="color: #2563eb; font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px;"><span style="display:inline-block; width:6px; height:6px; background:#2563eb; border-radius:50%;"></span> Spațiul Schengen</div>`;
+                              } else if (status === 'required') {
+                                            memberBadge = `<div style="color: #dc2626; font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px;"><span style="display:inline-block; width:6px; height:6px; background:#dc2626; border-radius:50%;"></span> Necesită viză (Reg. (UE) 2018/1806)</div>`;
+                              } else if (status === 'exempt') {
+                                            memberBadge = `<div style="color: #16a34a; font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px;"><span style="display:inline-block; width:6px; height:6px; background:#16a34a; border-radius:50%;"></span> Nu necesită viză (Reg. (UE) 2018/1806)</div>`;
+                              }
+                  } else if (memberYear !== false) {
             const yearText = typeof memberYear === 'number' ? `(din ${memberYear})` : ``;
             memberBadge = `<div style="color: #16a34a; font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
                  <span style="display:inline-block; width:6px; height:6px; background:#16a34a; border-radius:50%;"></span> Membru ${yearText}
@@ -140,16 +163,7 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
       })
       .onPolygonHover(hoverD => {
         world.polygonAltitude(d => d === hoverD ? 0.08 : 0.01)
-          .polygonCapColor(d => {
-            if (d === hoverD) return '#60a5fa'; 
-            
-            if (currentOrg === 'none') {
-               return 'rgba(255, 255, 255, 0.6)';
-            }
-            
-            const iso = getIso(d);
-            return getCountryMemberYear(iso) !== false ? 'rgba(34, 197, 94, 0.9)' : 'rgba(200, 205, 215, 0.6)';
-          });
+          .polygonCapColor(d => d === hoverD ? '#60a5fa' : getPolygonColor(d));
       })
       .polygonsTransitionDuration(300);
 
@@ -171,6 +185,9 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
            btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">190 de state</span>`;
         } else if (org === 'unesco') {
            btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">194 de state</span>`;
+        } else if (org === 'schengen_viza') {
+                    btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">Reg. (UE) 2018/1806</span>`;
+          
         } else if (organizations[org]) {
            const count = Object.keys(organizations[org]).length;
            btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">${count} de state</span>`;
