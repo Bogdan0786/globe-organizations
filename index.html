@@ -4,13 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Organizații Globale</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=18">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/globe.gl"></script>
 </head>
 <body>
   <div id="signature">Popa Bogdan</div>
+  <div id="visa-counters" aria-live="polite">
+    <div class="visa-counter visa-counter-green">
+      <span class="visa-counter-number" id="count-exempt">0</span>
+      <span class="visa-counter-label">țări <b>NU</b> au nevoie de viză</span>
+    </div>
+    <div class="visa-counter visa-counter-red">
+      <span class="visa-counter-number" id="count-required">0</span>
+      <span class="visa-counter-label">țări au nevoie de viză</span>
+    </div>
+    <div class="visa-counter-note">Conf. Reg. (UE) 2018/1806</div>
+  </div>
   <div id="ui-container">
     <h1>Organizații Globale</h1>
     <p>Selectați o organizație pentru a vedea țările membre pe glob (marcate cu verde).</p>
@@ -38,6 +49,6 @@
     </div>
   </div>
   <div id="globe-container"></div>
-  <script src="script.js?v=17"></script>
+  <script src="script.js?v=18"></script>
 </body>
 </html>

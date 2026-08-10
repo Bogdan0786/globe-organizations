@@ -1,0 +1,9 @@
+{
+  "name": "globe-organizations",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Organizații Globale — glob interactiv 3D",
+  "scripts": {
+    "dev": "node server.js"
+  }
+}
