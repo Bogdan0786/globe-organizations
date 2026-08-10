@@ -203,7 +203,6 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
         return false;
     };
           const getPolygonColor = (feat) => {
-                    if (feat === highlightedFeature) return 'rgba(245, 158, 11, 0.95)';
                     if (currentOrg === 'none') return 'rgba(255, 255, 255, 0.6)';
                     const iso = getIso(feat);
                     if (currentOrg === 'schengen_viza') {
