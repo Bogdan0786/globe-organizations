@@ -697,10 +697,28 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
         }
 
         btn.addEventListener('click', (e) => {
+          const org = e.currentTarget.getAttribute('data-org');
+
+          // Toggle: a doua apăsare pe „Teritoriile de peste mări" închide panoul
+          if (org === 'overseas' && currentOrg === 'overseas') {
+            currentOrg = 'none';
+            buttons.forEach(b => b.classList.remove('active'));
+            document.querySelector('#button-group button[data-org="none"]').classList.add('active');
+            highlightedFeature = null;
+            overseasSelection = null;
+            clearTerritoryFocus(false);
+            overseasPanel.classList.remove('visible');
+            applyOverseas();
+            renderOverseasInfo();
+            refreshPolygons();
+            updateVisaCounters();
+            return;
+          }
+
           buttons.forEach(b => b.classList.remove('active'));
           e.currentTarget.classList.add('active');
           
-          currentOrg = e.currentTarget.getAttribute('data-org');
+          currentOrg = org;
           if (currentOrg === 'none') highlightedFeature = null;
           if (currentOrg !== 'overseas') overseasSelection = null;
           clearTerritoryFocus(false);
