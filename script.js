@@ -41,6 +41,8 @@ const organizations = {
 let currentOrg = 'none';
 let highlightedFeature = null;
 let overseasSelection = null;
+let focusedTerritory = null;
+let focusedTerritoryIso = null;
 let resumeRotateTimer = null;
 
 // ---------- Teritorii de peste mări ----------
@@ -413,14 +415,14 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
       .pointLat(d => d.lat)
       .pointLng(d => d.lng)
       .pointColor(() => 'rgba(147, 51, 234, 0.95)')
-      .pointAltitude(0.16)
-      .pointRadius(0.65)
+      .pointAltitude(d => d === focusedTerritory ? 0.32 : 0.16)
+      .pointRadius(d => d === focusedTerritory ? 1.0 : 0.65)
       .pointsMerge(false)
       .labelsData([])
       .labelLat(d => d.lat)
       .labelLng(d => d.lng)
       .labelText(d => d.name)
-      .labelSize(1.0)
+      .labelSize(d => d === focusedTerritory ? 1.6 : 1.0)
       .labelDotRadius(0.35)
       .labelColor(() => 'rgba(88, 28, 135, 0.95)')
       .labelAltitude(0.02)
@@ -428,6 +430,7 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
 
       // Altitudinea poligoanelor: țara căutată + teritoriile selectate ies în relief
       const reliefAlt = (d) => {
+        if (focusedTerritoryIso && getIso(d) === focusedTerritoryIso) return 0.3;
         if (d === highlightedFeature) return 0.25;
         if (currentOrg === 'overseas' && overseasSelection) {
           const iso = getIso(d);
@@ -442,6 +445,76 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
         world.polygonAltitude(d => reliefAlt(d));
         world.polygonCapColor(d => getPolygonColor(d));
       };
+
+      // Re-aplică aspectul punctelor-teritorii (dimensiune/relief la hover)
+      const refreshPoints = () => {
+        world.pointAltitude(world.pointAltitude());
+        world.pointRadius(world.pointRadius());
+        world.labelSize(world.labelSize());
+      };
+
+      // Lista completă de teritorii a unei țări (puncte + poligoane), sortată alfabetic
+      const territoryItems = (code) => {
+        const t = overseasTerritories[code];
+        const items = t.points.map(p => ({ kind: 'point', ref: p, name: p.name, lat: p.lat, lng: p.lng }));
+        t.polygons.forEach(polyIso => {
+          const entry = countryIndex.find(c => c.iso === polyIso);
+          if (entry) items.push({ kind: 'polygon', iso: polyIso, name: roNames[polyIso] || entry.nameRo, lat: entry.lat, lng: entry.lng });
+        });
+        return items.sort((a, b) => a.name.localeCompare(b.name, 'ro'));
+      };
+
+      // Hover pe un teritoriu din panoul din dreapta: globul zboară la el
+      const focusTerritory = (item) => {
+        focusedTerritory = item.kind === 'point' ? item.ref : null;
+        focusedTerritoryIso = item.kind === 'polygon' ? item.iso : null;
+        refreshPoints();
+        refreshPolygons();
+        world.pointOfView({ lat: item.lat, lng: item.lng, altitude: 1.2 }, 1200);
+        world.controls().autoRotate = false;
+        clearTimeout(resumeRotateTimer);
+        resumeRotateTimer = setTimeout(() => { world.controls().autoRotate = true; }, 9000);
+      };
+
+      const clearTerritoryFocus = (flyBack) => {
+        focusedTerritory = null;
+        focusedTerritoryIso = null;
+        refreshPoints();
+        refreshPolygons();
+        if (flyBack && currentOrg === 'overseas' && overseasSelection) {
+          const entry = countryIndex.find(c => c.iso === overseasSelection);
+          if (entry) world.pointOfView({ lat: entry.lat, lng: entry.lng, altitude: 2.3 }, 1200);
+        }
+      };
+
+      // Panoul din dreapta: „Franța — 13 teritorii —" + lista teritoriilor
+      const overseasInfo = document.getElementById('overseas-info');
+      const renderOverseasInfo = () => {
+        if (currentOrg !== 'overseas' || !overseasSelection) {
+          overseasInfo.classList.remove('visible');
+          return;
+        }
+        const t = overseasTerritories[overseasSelection];
+        const items = territoryItems(overseasSelection);
+        document.getElementById('overseas-info-name').textContent = t.name;
+        document.getElementById('overseas-info-count').textContent = `— ${items.length} teritorii —`;
+        const list = document.getElementById('overseas-info-list');
+        list.innerHTML = items.map((it, i) =>
+          `<div class="overseas-info-item" data-idx="${i}">• ${it.name}</div>`
+        ).join('');
+        list.querySelectorAll('.overseas-info-item').forEach(el => {
+          el.addEventListener('mouseenter', () => {
+            list.querySelectorAll('.overseas-info-item').forEach(x => x.classList.remove('hover'));
+            el.classList.add('hover');
+            focusTerritory(items[Number(el.getAttribute('data-idx'))]);
+          });
+        });
+        overseasInfo.classList.add('visible');
+      };
+      overseasInfo.addEventListener('mouseleave', () => {
+        document.querySelectorAll('.overseas-info-item.hover').forEach(x => x.classList.remove('hover'));
+        clearTerritoryFocus(true);
+      });
 
       // Afișează/ascunde punctele-teritorii și etichetele lor
       const applyOverseas = () => {
@@ -469,8 +542,10 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
         overseasList.querySelectorAll('.overseas-item').forEach(el => {
           el.addEventListener('click', () => {
             overseasSelection = el.getAttribute('data-code');
+            clearTerritoryFocus(false);
             renderOverseasPanel();
             applyOverseas();
+            renderOverseasInfo();
             refreshPolygons();
             const entry = countryIndex.find(c => c.iso === overseasSelection);
             if (entry) {
@@ -628,9 +703,11 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
           currentOrg = e.currentTarget.getAttribute('data-org');
           if (currentOrg === 'none') highlightedFeature = null;
           if (currentOrg !== 'overseas') overseasSelection = null;
+          clearTerritoryFocus(false);
           overseasPanel.classList.toggle('visible', currentOrg === 'overseas');
           renderOverseasPanel();
           applyOverseas();
+          renderOverseasInfo();
           refreshPolygons();
           updateVisaCounters();
         });

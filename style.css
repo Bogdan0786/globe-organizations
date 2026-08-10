@@ -334,6 +334,70 @@ button.active::before {
   padding-right: 4px;
 }
 
+/* Panoul din dreapta cu lista teritoriilor țării selectate */
+#overseas-info {
+  position: absolute;
+  top: 105px;
+  right: 40px;
+  z-index: 2;
+  width: 245px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  padding: 12px 12px 8px;
+  font-family: 'Inter', sans-serif;
+  opacity: 0;
+  transform: translateX(20px);
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+#overseas-info.visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.overseas-info-header {
+  font-size: 14px;
+  font-weight: 600;
+  color: #7e22ce;
+  margin-bottom: 6px;
+  padding: 0 6px;
+}
+
+#overseas-info-count {
+  font-weight: 400;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+#overseas-info-list {
+  max-height: 50vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.overseas-info-item {
+  font-size: 12px;
+  color: #334155;
+  padding: 5px 8px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.overseas-info-item:hover,
+.overseas-info-item.hover {
+  background: rgba(147, 51, 234, 0.12);
+  color: #7e22ce;
+}
+
 /* Responsivitate pentru telefoane (Android/iOS) */
 @media (max-width: 768px) {
   #ui-container {
@@ -419,5 +483,28 @@ button.active::before {
   .visa-counter-note {
     font-size: 9.5px;
     text-align: left;
+  }
+
+  /* Panoul teritoriilor: pe mobil sus în stânga, compact */
+  #overseas-info {
+    top: 12px;
+    left: 12px;
+    right: auto;
+    width: auto;
+    max-width: 46vw;
+    padding: 8px 8px 5px;
+  }
+
+  .overseas-info-header {
+    font-size: 12px;
+  }
+
+  #overseas-info-list {
+    max-height: 28vh;
+  }
+
+  .overseas-info-item {
+    font-size: 11px;
+    padding: 4px 6px;
   }
 }
