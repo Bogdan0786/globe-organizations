@@ -43,6 +43,7 @@ let highlightedFeature = null;
 let overseasSelection = null;
 let focusedTerritory = null;
 let focusedTerritoryIso = null;
+let focusedTerritoryName = null;
 let resumeRotateTimer = null;
 
 // ---------- Teritorii de peste mări ----------
@@ -245,11 +246,17 @@ const centroidOf = (feature) => {
   return { lat, lng };
 };
 
-fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
-  .then(res => res.json())
-  .then(countries => {
-    
+Promise.all([
+  fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson').then(res => res.json()),
+  fetch('territories.geojson?v=26').then(res => res.json()).catch(() => ({ features: [] }))
+]).then(([countries, territoriesGeo]) => {
+
+    // Toate poligoanele globului: țările (110m) + contururile reale ale teritoriilor (10m)
+    const allFeatures = countries.features.concat(territoriesGeo.features);
+
     const getIso = (feat) => {
+        // teritoriile de peste mări moștenesc statutul țării-mamă
+        if (feat.properties.parentIso) return feat.properties.parentIso;
         let iso = feat.properties.ISO_A3;
         if (iso === '-99' || !iso) {
             iso = feat.properties.ADM0_A3;
@@ -351,10 +358,14 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
                     if (currentOrg === 'overseas') {
                                 if (overseasSelection) {
                                             const t = overseasTerritories[overseasSelection];
+                                            if (feat.properties.parentIso) {
+                                                        return feat.properties.parentIso === overseasSelection ? 'rgba(192, 132, 252, 0.95)' : 'rgba(200, 205, 215, 0.6)';
+                                            }
                                             if (iso === overseasSelection) return 'rgba(147, 51, 234, 0.9)';
                                             if (t.polygons.includes(iso)) return 'rgba(192, 132, 252, 0.95)';
                                             return 'rgba(200, 205, 215, 0.6)';
                                 }
+                                if (feat.properties.parentIso) return 'rgba(200, 205, 215, 0.6)';
                                 return overseasParents.includes(iso) ? 'rgba(147, 51, 234, 0.7)' : 'rgba(200, 205, 215, 0.6)';
                     }
                     return getCountryMemberYear(iso) !== false ? 'rgba(34, 197, 94, 0.9)' : 'rgba(200, 205, 215, 0.6)';
@@ -364,13 +375,14 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
       (document.getElementById('globe-container'))
       .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
       .backgroundColor('#f8fafc')
-      .polygonsData(countries.features)
+      .polygonsData(allFeatures)
       .polygonAltitude(0.01)
       .polygonCapColor(feat => getPolygonColor(feat))
       .polygonSideColor(() => 'rgba(0, 0, 0, 0.1)')
       .polygonStrokeColor(() => '#e2e8f0')
-      .polygonLabel(({ properties: d }) => {
-          const iso = d.ISO_A3 === '-99' ? d.ADM0_A3 : d.ISO_A3;
+      .polygonLabel((feat) => {
+          const d = feat.properties;
+          const iso = getIso(feat);
           const memberYear = getCountryMemberYear(iso);
           
           let memberBadge = '';
@@ -387,10 +399,10 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
                               }
                   } else if (currentOrg === 'overseas' && overseasSelection) {
                               const t = overseasTerritories[overseasSelection];
-                              if (iso === overseasSelection) {
-                                            memberBadge = `<div style="color: #9333ea; font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px;"><span style="display:inline-block; width:6px; height:6px; background:#9333ea; border-radius:50%;"></span> Țară-mamă</div>`;
-                              } else if (t.polygons.includes(iso)) {
+                              if (d.parentIso === overseasSelection || t.polygons.includes(iso)) {
                                             memberBadge = `<div style="color: #9333ea; font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px;"><span style="display:inline-block; width:6px; height:6px; background:#9333ea; border-radius:50%;"></span> Teritoriu aparținând: ${t.name}</div>`;
+                              } else if (iso === overseasSelection) {
+                                            memberBadge = `<div style="color: #9333ea; font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px;"><span style="display:inline-block; width:6px; height:6px; background:#9333ea; border-radius:50%;"></span> Țară-mamă</div>`;
                               }
                   } else if (memberYear !== false) {
             const yearText = typeof memberYear === 'number' ? `(din ${memberYear})` : ``;
@@ -401,7 +413,7 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
             
           return `
             <div style="background: rgba(255, 255, 255, 0.95); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-family: 'Inter', sans-serif;">
-                <b style="color: #1e293b; font-size: 14px;">${roNames[iso] || d.ADMIN}</b>
+                <b style="color: #1e293b; font-size: 14px;">${d.name || roNames[iso] || d.ADMIN}</b>
                 ${memberBadge}
             </div>
           `;
@@ -431,12 +443,14 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
 
       // Altitudinea poligoanelor: țara căutată + teritoriile selectate ies în relief
       const reliefAlt = (d) => {
-        if (focusedTerritoryIso && getIso(d) === focusedTerritoryIso) return 0.3;
+        if (focusedTerritoryName && d.properties.name === focusedTerritoryName) return 0.3;
+        if (focusedTerritoryIso && !d.properties.parentIso && getIso(d) === focusedTerritoryIso) return 0.3;
         if (d === highlightedFeature) return 0.25;
         if (currentOrg === 'overseas' && overseasSelection) {
           const iso = getIso(d);
           const t = overseasTerritories[overseasSelection];
-          if (iso === overseasSelection || t.polygons.includes(iso)) return 0.14;
+          if (d.properties.parentIso === overseasSelection) return 0.14;
+          if (!d.properties.parentIso && (iso === overseasSelection || t.polygons.includes(iso))) return 0.14;
         }
         return 0.01;
       };
@@ -469,8 +483,10 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
 
       // Hover pe un teritoriu din panoul din dreapta: globul zboară la el
       const focusTerritory = (item) => {
-        focusedTerritory = item.kind === 'point' ? item.ref : null;
+        const hasGeo = item.kind === 'point' && currentGeoNames.has(item.name);
+        focusedTerritory = (item.kind === 'point' && !hasGeo) ? item.ref : null;
         focusedTerritoryIso = item.kind === 'polygon' ? item.iso : null;
+        focusedTerritoryName = hasGeo ? item.name : null;
         refreshPoints();
         refreshPolygons();
         world.pointOfView({ lat: item.lat, lng: item.lng, altitude: 1.2 }, 1200);
@@ -482,6 +498,7 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
       const clearTerritoryFocus = (flyBack) => {
         focusedTerritory = null;
         focusedTerritoryIso = null;
+        focusedTerritoryName = null;
         refreshPoints();
         refreshPolygons();
         if (flyBack && currentOrg === 'overseas' && overseasSelection) {
@@ -519,14 +536,23 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
         clearTerritoryFocus(true);
       });
 
-      // Afișează/ascunde punctele-teritorii și etichetele lor
+      // Afișează/ascunde punctele-teritorii și etichetele lor.
+      // Cilindrele rămân DOAR pentru teritoriile fără contur real; cele cu
+      // contur sunt desenate ca poligoane, dar păstrează eticheta HTML.
+      let currentGeoNames = new Set();
       const applyOverseas = () => {
         if (currentOrg === 'overseas' && overseasSelection) {
           const t = overseasTerritories[overseasSelection];
+          currentGeoNames = new Set(
+            territoriesGeo.features
+              .filter(f => f.properties.parentIso === overseasSelection)
+              .map(f => f.properties.name)
+          );
           currentTerritoryPoints = t.points;
-          world.pointsData(t.points);
+          world.pointsData(t.points.filter(p => !currentGeoNames.has(p.name)));
           world.htmlElementsData(t.points);
         } else {
+          currentGeoNames = new Set();
           currentTerritoryPoints = [];
           world.pointsData([]);
           world.htmlElementsData([]);
