@@ -482,6 +482,7 @@ Promise.all([
       };
 
       // Hover pe un teritoriu din panoul din dreapta: globul zboară la el
+      // și RĂMÂNE acolo până la alegerea altui teritoriu (fără fly-back).
       const focusTerritory = (item) => {
         const hasGeo = item.kind === 'point' && currentGeoNames.has(item.name);
         focusedTerritory = (item.kind === 'point' && !hasGeo) ? item.ref : null;
@@ -492,7 +493,6 @@ Promise.all([
         world.pointOfView({ lat: item.lat, lng: item.lng, altitude: 1.2 }, 1200);
         world.controls().autoRotate = false;
         clearTimeout(resumeRotateTimer);
-        resumeRotateTimer = setTimeout(() => { world.controls().autoRotate = true; }, 9000);
       };
 
       const clearTerritoryFocus = (flyBack) => {
@@ -532,8 +532,7 @@ Promise.all([
         overseasInfo.classList.add('visible');
       };
       overseasInfo.addEventListener('mouseleave', () => {
-        document.querySelectorAll('.overseas-info-item.hover').forEach(x => x.classList.remove('hover'));
-        clearTerritoryFocus(true);
+        // Nu mai facem fly-back: teritoriul ales rămâne în prim-plan.
       });
 
       // Afișează/ascunde punctele-teritorii și etichetele lor.
@@ -743,6 +742,7 @@ Promise.all([
             renderOverseasInfo();
             refreshPolygons();
             updateVisaCounters();
+            world.controls().autoRotate = true;
             return;
           }
 
@@ -752,6 +752,7 @@ Promise.all([
           currentOrg = org;
           if (currentOrg === 'none') highlightedFeature = null;
           if (currentOrg !== 'overseas') overseasSelection = null;
+          if (currentOrg !== 'overseas') world.controls().autoRotate = true;
           clearTerritoryFocus(false);
           overseasPanel.classList.toggle('visible', currentOrg === 'overseas');
           renderOverseasPanel();
