@@ -40,7 +40,140 @@ const organizations = {
 
 let currentOrg = 'none';
 let highlightedFeature = null;
+let overseasSelection = null;
 let resumeRotateTimer = null;
+
+// ---------- Teritorii de peste mări ----------
+// polygons = coduri ISO prezente ca poligoane în setul de date al globului
+// points   = teritorii/insule care lipsesc din setul de date -> afișate ca puncte în relief
+const overseasTerritories = {
+  FRA: {
+    name: 'Franța',
+    polygons: ['NCL', 'ATF'],
+    points: [
+      { name: 'Guadelupa', lat: 16.25, lng: -61.58 },
+      { name: 'Martinica', lat: 14.64, lng: -61.02 },
+      { name: 'Guyana Franceză', lat: 4.0, lng: -53.0 },
+      { name: 'Réunion', lat: -21.11, lng: 55.53 },
+      { name: 'Mayotte', lat: -12.83, lng: 45.16 },
+      { name: 'Saint-Pierre și Miquelon', lat: 46.78, lng: -56.17 },
+      { name: 'Saint-Martin', lat: 18.07, lng: -63.05 },
+      { name: 'Saint-Barthélemy', lat: 17.90, lng: -62.83 },
+      { name: 'Polinezia Franceză', lat: -17.65, lng: -149.43 },
+      { name: 'Wallis și Futuna', lat: -13.30, lng: -176.20 },
+      { name: 'Insula Clipperton', lat: 10.30, lng: -109.22 }
+    ]
+  },
+  GBR: {
+    name: 'Regatul Unit',
+    polygons: ['FLK'],
+    points: [
+      { name: 'Gibraltar', lat: 36.14, lng: -5.35 },
+      { name: 'Bermuda', lat: 32.30, lng: -64.77 },
+      { name: 'Insulele Cayman', lat: 19.32, lng: -81.24 },
+      { name: 'Turks și Caicos', lat: 21.79, lng: -71.79 },
+      { name: 'Insulele Virgine Britanice', lat: 18.42, lng: -64.62 },
+      { name: 'Anguilla', lat: 18.22, lng: -63.05 },
+      { name: 'Montserrat', lat: 16.74, lng: -62.19 },
+      { name: 'Saint Helena', lat: -15.96, lng: -5.71 },
+      { name: 'Ascension', lat: -7.94, lng: -14.37 },
+      { name: 'Tristan da Cunha', lat: -37.10, lng: -12.28 },
+      { name: 'Pitcairn', lat: -24.37, lng: -128.32 },
+      { name: 'Georgia de Sud', lat: -54.28, lng: -36.50 },
+      { name: 'Diego Garcia (BIOT)', lat: -7.32, lng: 72.42 },
+      { name: 'Akrotiri și Dhekelia', lat: 34.60, lng: 32.97 }
+    ]
+  },
+  ESP: {
+    name: 'Spania',
+    polygons: [],
+    points: [
+      { name: 'Insulele Canare', lat: 28.10, lng: -15.40 },
+      { name: 'Ceuta', lat: 35.89, lng: -5.31 },
+      { name: 'Melilla', lat: 35.29, lng: -2.94 }
+    ]
+  },
+  PRT: {
+    name: 'Portugalia',
+    polygons: [],
+    points: [
+      { name: 'Azore', lat: 37.74, lng: -25.67 },
+      { name: 'Madeira', lat: 32.67, lng: -16.92 }
+    ]
+  },
+  DNK: {
+    name: 'Danemarca',
+    polygons: ['GRL'],
+    points: [
+      { name: 'Insulele Feroe', lat: 61.97, lng: -6.90 }
+    ]
+  },
+  NLD: {
+    name: 'Țările de Jos',
+    polygons: [],
+    points: [
+      { name: 'Aruba', lat: 12.52, lng: -70.03 },
+      { name: 'Curaçao', lat: 12.17, lng: -68.93 },
+      { name: 'Sint Maarten', lat: 18.04, lng: -63.06 },
+      { name: 'Bonaire', lat: 12.15, lng: -68.27 },
+      { name: 'Saba', lat: 17.63, lng: -63.23 },
+      { name: 'Sint Eustatius', lat: 17.49, lng: -62.98 }
+    ]
+  },
+  USA: {
+    name: 'Statele Unite ale Americii',
+    polygons: ['PRI'],
+    points: [
+      { name: 'Guam', lat: 13.44, lng: 144.79 },
+      { name: 'Insulele Virgine Americane', lat: 18.34, lng: -64.90 },
+      { name: 'Samoa Americană', lat: -14.27, lng: -170.70 },
+      { name: 'Insulele Mariane de Nord', lat: 15.18, lng: 145.75 }
+    ]
+  },
+  NOR: {
+    name: 'Norvegia',
+    polygons: [],
+    points: [
+      { name: 'Svalbard', lat: 78.22, lng: 15.63 },
+      { name: 'Jan Mayen', lat: 71.0, lng: -8.30 },
+      { name: 'Insula Bouvet', lat: -54.42, lng: 3.36 }
+    ]
+  },
+  AUS: {
+    name: 'Australia',
+    polygons: [],
+    points: [
+      { name: 'Insula Norfolk', lat: -29.03, lng: 167.95 },
+      { name: 'Insula Crăciunului', lat: -10.49, lng: 105.62 },
+      { name: 'Insulele Cocos', lat: -12.16, lng: 96.87 }
+    ]
+  },
+  NZL: {
+    name: 'Noua Zeelandă',
+    polygons: [],
+    points: [
+      { name: 'Insulele Cook', lat: -21.23, lng: -159.78 },
+      { name: 'Niue', lat: -19.05, lng: -169.87 },
+      { name: 'Tokelau', lat: -9.20, lng: -171.85 }
+    ]
+  },
+  CHL: {
+    name: 'Chile',
+    polygons: [],
+    points: [
+      { name: 'Insula Paștelui (Rapa Nui)', lat: -27.11, lng: -109.35 },
+      { name: 'Juan Fernández', lat: -33.64, lng: -78.84 }
+    ]
+  },
+  ECU: {
+    name: 'Ecuador',
+    polygons: [],
+    points: [
+      { name: 'Insulele Galápagos', lat: -0.74, lng: -90.31 }
+    ]
+  }
+};
+const overseasParents = Object.keys(overseasTerritories);
 
 // ---------- Căutare țări ----------
 // Dicționar nume în română (după cod ISO A3). Unde lipsește, se folosește numele în engleză.
@@ -78,7 +211,8 @@ const roNames = {
   TUN: 'Tunisia', TUR: 'Turcia', TKM: 'Turkmenistan', TUV: 'Tuvalu', UGA: 'Uganda', UKR: 'Ucraina',
   ARE: 'Emiratele Arabe Unite', GBR: 'Regatul Unit', USA: 'Statele Unite ale Americii', URY: 'Uruguay',
   UZB: 'Uzbekistan', VUT: 'Vanuatu', VAT: 'Vatican', VEN: 'Venezuela', VNM: 'Vietnam', YEM: 'Yemen',
-  ZMB: 'Zambia', ZWE: 'Zimbabwe', ESH: 'Sahara de Vest'
+  ZMB: 'Zambia', ZWE: 'Zimbabwe', ESH: 'Sahara de Vest',
+  NCL: 'Noua Caledonie', ATF: 'Teritoriile Australe Franceze', PRI: 'Puerto Rico', FLK: 'Insulele Falkland'
 };
 
 // Elimină diacriticele și face literele mici: „România" -> „romania"
@@ -212,6 +346,15 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
                                 if (status === 'exempt' || status === 'eu_exempt') return 'rgba(34, 197, 94, 0.9)';
                                 return 'rgba(200, 205, 215, 0.6)';
                     }
+                    if (currentOrg === 'overseas') {
+                                if (overseasSelection) {
+                                            const t = overseasTerritories[overseasSelection];
+                                            if (iso === overseasSelection) return 'rgba(147, 51, 234, 0.9)';
+                                            if (t.polygons.includes(iso)) return 'rgba(192, 132, 252, 0.95)';
+                                            return 'rgba(200, 205, 215, 0.6)';
+                                }
+                                return overseasParents.includes(iso) ? 'rgba(147, 51, 234, 0.7)' : 'rgba(200, 205, 215, 0.6)';
+                    }
                     return getCountryMemberYear(iso) !== false ? 'rgba(34, 197, 94, 0.9)' : 'rgba(200, 205, 215, 0.6)';
           };
 
@@ -240,6 +383,13 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
                               } else if (status === 'eu_exempt') {
                                             memberBadge = `<div style="color: #16a34a; font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px;"><span style="display:inline-block; width:6px; height:6px; background:#16a34a; border-radius:50%;"></span> Stat membru UE (non-Schengen) – nu necesită viză</div>`;
                               }
+                  } else if (currentOrg === 'overseas' && overseasSelection) {
+                              const t = overseasTerritories[overseasSelection];
+                              if (iso === overseasSelection) {
+                                            memberBadge = `<div style="color: #9333ea; font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px;"><span style="display:inline-block; width:6px; height:6px; background:#9333ea; border-radius:50%;"></span> Țară-mamă</div>`;
+                              } else if (t.polygons.includes(iso)) {
+                                            memberBadge = `<div style="color: #9333ea; font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px;"><span style="display:inline-block; width:6px; height:6px; background:#9333ea; border-radius:50%;"></span> Teritoriu aparținând: ${t.name}</div>`;
+                              }
                   } else if (memberYear !== false) {
             const yearText = typeof memberYear === 'number' ? `(din ${memberYear})` : ``;
             memberBadge = `<div style="color: #16a34a; font-size: 12px; margin-top: 4px; display: flex; align-items: center; gap: 4px;">
@@ -255,18 +405,82 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
           `;
       })
       .onPolygonHover(hoverD => {
-        world.polygonAltitude(d => {
-          if (d === hoverD) return d === highlightedFeature ? 0.28 : 0.08;
-          return d === highlightedFeature ? 0.25 : 0.01;
-        })
+        world.polygonAltitude(d => d === hoverD ? Math.max(0.08, reliefAlt(d)) : reliefAlt(d))
           .polygonCapColor(d => d === hoverD ? '#60a5fa' : getPolygonColor(d));
       })
-      .polygonsTransitionDuration(300);
+      .polygonsTransitionDuration(300)
+      .pointsData([])
+      .pointLat(d => d.lat)
+      .pointLng(d => d.lng)
+      .pointColor(() => 'rgba(147, 51, 234, 0.95)')
+      .pointAltitude(0.16)
+      .pointRadius(0.65)
+      .pointsMerge(false)
+      .labelsData([])
+      .labelLat(d => d.lat)
+      .labelLng(d => d.lng)
+      .labelText(d => d.name)
+      .labelSize(1.0)
+      .labelDotRadius(0.35)
+      .labelColor(() => 'rgba(88, 28, 135, 0.95)')
+      .labelAltitude(0.02)
+      .labelResolution(2);
+
+      // Altitudinea poligoanelor: țara căutată + teritoriile selectate ies în relief
+      const reliefAlt = (d) => {
+        if (d === highlightedFeature) return 0.25;
+        if (currentOrg === 'overseas' && overseasSelection) {
+          const iso = getIso(d);
+          const t = overseasTerritories[overseasSelection];
+          if (iso === overseasSelection || t.polygons.includes(iso)) return 0.14;
+        }
+        return 0.01;
+      };
 
       // Redesenează poligoanele (relief + culori) în funcție de țara evidențiată
       const refreshPolygons = () => {
-        world.polygonAltitude(d => d === highlightedFeature ? 0.25 : 0.01);
+        world.polygonAltitude(d => reliefAlt(d));
         world.polygonCapColor(d => getPolygonColor(d));
+      };
+
+      // Afișează/ascunde punctele-teritorii și etichetele lor
+      const applyOverseas = () => {
+        if (currentOrg === 'overseas' && overseasSelection) {
+          const t = overseasTerritories[overseasSelection];
+          world.pointsData(t.points);
+          world.labelsData(t.points);
+        } else {
+          world.pointsData([]);
+          world.labelsData([]);
+        }
+      };
+
+      // Panoul derulant cu țările care au teritorii de peste mări
+      const overseasPanel = document.getElementById('overseas-panel');
+      const overseasList = document.getElementById('overseas-list');
+      const renderOverseasPanel = () => {
+        overseasList.innerHTML = overseasParents.map(code => {
+          const t = overseasTerritories[code];
+          const count = t.polygons.length + t.points.length;
+          return `<div class="overseas-item${code === overseasSelection ? ' active' : ''}" data-code="${code}">
+            <span>${t.name}</span><span class="overseas-count">${count} teritorii</span>
+          </div>`;
+        }).join('');
+        overseasList.querySelectorAll('.overseas-item').forEach(el => {
+          el.addEventListener('click', () => {
+            overseasSelection = el.getAttribute('data-code');
+            renderOverseasPanel();
+            applyOverseas();
+            refreshPolygons();
+            const entry = countryIndex.find(c => c.iso === overseasSelection);
+            if (entry) {
+              world.pointOfView({ lat: entry.lat, lng: entry.lng, altitude: 2.3 }, 1600);
+              world.controls().autoRotate = false;
+              clearTimeout(resumeRotateTimer);
+              resumeRotateTimer = setTimeout(() => { world.controls().autoRotate = true; }, 9000);
+            }
+          });
+        });
       };
 
       // ---------- Motor de căutare țări ----------
@@ -399,6 +613,9 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
         } else if (org === 'schengen_viza') {
                     btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">Reg. (UE) 2018/1806</span>`;
           
+        } else if (org === 'overseas') {
+                    btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">${overseasParents.length} țări</span>`;
+
         } else if (organizations[org]) {
            const count = Object.keys(organizations[org]).length;
            btn.innerHTML += ` <span style="opacity: 0.7; font-size: 0.9em; margin-left: auto; background: rgba(0,0,0,0.05); padding: 2px 6px; border-radius: 4px;">${count} de state</span>`;
@@ -410,6 +627,10 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
           
           currentOrg = e.currentTarget.getAttribute('data-org');
           if (currentOrg === 'none') highlightedFeature = null;
+          if (currentOrg !== 'overseas') overseasSelection = null;
+          overseasPanel.classList.toggle('visible', currentOrg === 'overseas');
+          renderOverseasPanel();
+          applyOverseas();
           refreshPolygons();
           updateVisaCounters();
         });
