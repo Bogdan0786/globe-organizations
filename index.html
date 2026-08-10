@@ -2,15 +2,24 @@
 <html lang="ro">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Globe Org">
   <title>Organizații Globale</title>
-  <link rel="stylesheet" href="style.css?v=27">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css?v=28">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/globe.gl"></script>
 </head>
 <body>
   <div id="signature">Popa Bogdan</div>
+  <div id="tap-chip"></div>
   <div id="visa-counters" aria-live="polite">
     <div class="visa-counter visa-counter-green">
       <span class="visa-counter-number" id="count-exempt">0</span>
@@ -62,6 +71,11 @@
     </div>
   </div>
   <div id="globe-container"></div>
-  <script src="script.js?v=27"></script>
+  <script src="script.js?v=28"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+  </script>
 </body>
 </html>

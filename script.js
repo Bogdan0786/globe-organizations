@@ -371,20 +371,13 @@ Promise.all([
                     return getCountryMemberYear(iso) !== false ? 'rgba(34, 197, 94, 0.9)' : 'rgba(200, 205, 215, 0.6)';
           };
 
-    const world = Globe()
-      (document.getElementById('globe-container'))
-      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-      .backgroundColor('#f8fafc')
-      .polygonsData(allFeatures)
-      .polygonAltitude(0.01)
-      .polygonCapColor(feat => getPolygonColor(feat))
-      .polygonSideColor(() => 'rgba(0, 0, 0, 0.1)')
-      .polygonStrokeColor(() => '#e2e8f0')
-      .polygonLabel((feat) => {
+    // Cardul cu informații despre o țară/teritoriu — folosit atât la tooltip
+    // (desktop), cât și la chip-ul de tap (mobil).
+    const buildCountryCard = (feat) => {
           const d = feat.properties;
           const iso = getIso(feat);
           const memberYear = getCountryMemberYear(iso);
-          
+
           let memberBadge = '';
                   if (currentOrg === 'schengen_viza') {
                               const status = getSchengenVizaStatus(iso);
@@ -410,13 +403,33 @@ Promise.all([
                  <span style="display:inline-block; width:6px; height:6px; background:#16a34a; border-radius:50%;"></span> Membru ${yearText}
                </div>`;
           }
-            
+
           return `
             <div style="background: rgba(255, 255, 255, 0.95); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-family: 'Inter', sans-serif;">
                 <b style="color: #1e293b; font-size: 14px;">${d.name || roNames[iso] || d.ADMIN}</b>
                 ${memberBadge}
             </div>
           `;
+    };
+
+    const world = Globe()
+      (document.getElementById('globe-container'))
+      .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+      .backgroundColor('#f8fafc')
+      .polygonsData(allFeatures)
+      .polygonAltitude(0.01)
+      .polygonCapColor(feat => getPolygonColor(feat))
+      .polygonSideColor(() => 'rgba(0, 0, 0, 0.1)')
+      .polygonStrokeColor(() => '#e2e8f0')
+      .polygonLabel((feat) => buildCountryCard(feat))
+      .onPolygonClick((feat) => {
+        // Pe mobil (touch) tooltips nu există — arătăm un chip cu info sus pe ecran
+        if (!feat) return;
+        const chip = document.getElementById('tap-chip');
+        chip.innerHTML = buildCountryCard(feat);
+        chip.classList.add('visible');
+        clearTimeout(chip._hideTimer);
+        chip._hideTimer = setTimeout(() => chip.classList.remove('visible'), 4000);
       })
       .onPolygonHover(hoverD => {
         world.polygonAltitude(d => d === hoverD ? Math.max(0.08, reliefAlt(d)) : reliefAlt(d))
