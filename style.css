@@ -185,6 +185,23 @@ p {
   white-space: nowrap;
 }
 
+/* Etichetele teritoriilor de pe glob (HTML, cu diacritice corecte) */
+.territory-label {
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.75), 0 0 10px rgba(147, 51, 234, 0.55);
+}
+
+.territory-label.focused {
+  font-size: 16px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.85), 0 0 14px rgba(147, 51, 234, 0.9);
+}
+
 #button-group {
   display: flex;
   flex-direction: column;
@@ -506,5 +523,13 @@ button.active::before {
   .overseas-info-item {
     font-size: 11px;
     padding: 4px 6px;
+  }
+
+  .territory-label {
+    font-size: 10.5px;
+  }
+
+  .territory-label.focused {
+    font-size: 13px;
   }
 }

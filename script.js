@@ -418,15 +418,16 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
       .pointAltitude(d => d === focusedTerritory ? 0.32 : 0.16)
       .pointRadius(d => d === focusedTerritory ? 1.0 : 0.65)
       .pointsMerge(false)
-      .labelsData([])
-      .labelLat(d => d.lat)
-      .labelLng(d => d.lng)
-      .labelText(d => d.name)
-      .labelSize(d => d === focusedTerritory ? 1.6 : 1.0)
-      .labelDotRadius(0.35)
-      .labelColor(() => 'rgba(88, 28, 135, 0.95)')
-      .labelAltitude(0.02)
-      .labelResolution(2);
+      .htmlElementsData([])
+      .htmlLat(d => d.lat)
+      .htmlLng(d => d.lng)
+      .htmlAltitude(0.18)
+      .htmlElement(d => {
+        const el = document.createElement('div');
+        el.className = 'territory-label' + (d === focusedTerritory ? ' focused' : '');
+        el.textContent = d.name;
+        return el;
+      });
 
       // Altitudinea poligoanelor: țara căutată + teritoriile selectate ies în relief
       const reliefAlt = (d) => {
@@ -447,10 +448,12 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
       };
 
       // Re-aplică aspectul punctelor-teritorii (dimensiune/relief la hover)
+      let currentTerritoryPoints = [];
       const refreshPoints = () => {
         world.pointAltitude(world.pointAltitude());
         world.pointRadius(world.pointRadius());
-        world.labelSize(world.labelSize());
+        // Re-creează etichetele HTML pentru a aplica clasa „focused"
+        world.htmlElementsData(currentTerritoryPoints.slice());
       };
 
       // Lista completă de teritorii a unei țări (puncte + poligoane), sortată alfabetic
@@ -520,11 +523,13 @@ fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/data
       const applyOverseas = () => {
         if (currentOrg === 'overseas' && overseasSelection) {
           const t = overseasTerritories[overseasSelection];
+          currentTerritoryPoints = t.points;
           world.pointsData(t.points);
-          world.labelsData(t.points);
+          world.htmlElementsData(t.points);
         } else {
+          currentTerritoryPoints = [];
           world.pointsData([]);
-          world.labelsData([]);
+          world.htmlElementsData([]);
         }
       };
 
